@@ -1,5 +1,5 @@
 import { TokenPoolData, TxnData } from "@/types";
-import { bannedTokens, trendingIcons } from "@/utils/constants";
+import { TON_TOKEN_ID, bannedTokens, trendingIcons } from "@/utils/constants";
 import { client, teleBot } from "..";
 import {
   BOT_USERNAME,
@@ -56,9 +56,13 @@ export async function sendAlert(txnData: TxnData) {
 
     log(`Txn ${hash} for ${symbol}`);
 
-    const pools = poolsData.map(({ attributes }) =>
-      Address.parse(attributes.address).toRawString()
-    );
+    const pools = poolsData
+      .map(({ attributes, relationships }) => {
+        const isTonPool = relationships.quote_token.data.id === TON_TOKEN_ID;
+        if (isTonPool) return Address.parse(attributes.address).toRawString();
+        return false;
+      })
+      .filter((pool) => Boolean(pool));
 
     // To make sure that only pools are sending out tokens as only those are buys
     const txnSenderIsPool = pools.includes(pool);

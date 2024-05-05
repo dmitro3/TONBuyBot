@@ -50,3 +50,5 @@ export const adPrices: { [key: number]: number } = JSON.parse(AD_PRICES || "");
 export const urlRegex =
   /^(?:https?|ftp):\/\/(?:www\.)?[\w-]+\.[a-z]{2,}(?:\/[\w-]*)*\/?(?:\?[^#\s]*)?$/;
 export const transactionValidTime = 25 * 60;
+export const TON_TOKEN_ID =
+  "ton_EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
