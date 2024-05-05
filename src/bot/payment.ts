@@ -17,8 +17,8 @@ import {
 import { decrypt, encrypt } from "@/utils/cryptography";
 import {
   BOT_USERNAME,
-  CHANNEL_ID,
   TOKEN_DATA_URL,
+  TRENDING_CHANNEL_ID,
   TRENDING_TOKENS_API,
 } from "@/utils/env";
 import { roundUpToDecimalPlace } from "@/utils/general";
@@ -356,7 +356,9 @@ Ends in: ${duration} Hours
 [Buy Token](${buyLink}) \\| [Trending](${trendingLink})`;
 
             teleBot.api
-              .sendMessage(CHANNEL_ID || "", text, { parse_mode: "MarkdownV2" })
+              .sendMessage(TRENDING_CHANNEL_ID || "", text, {
+                parse_mode: "MarkdownV2",
+              })
               .catch((e) => errorHandler(e));
           }
         }
