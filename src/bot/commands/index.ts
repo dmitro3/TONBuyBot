@@ -34,8 +34,9 @@ export function initiateBotCommands() {
   teleBot.command("advertise", (ctx) => advertise(ctx));
 
   teleBot.hears(/\/setgif/, (ctx) => setGifCommand(ctx, true));
-  teleBot.on(":animation", (ctx) => {
+  teleBot.on([":animation", ":video"], (ctx) => {
     const chatId = ctx.chat.id;
+
     if (userState[chatId] === "setgif") {
       // @ts-expect-error CTX type invalid
       setGifCommand(ctx);
@@ -45,8 +46,10 @@ export function initiateBotCommands() {
     }
   });
 
-  // @ts-expect-error CTX type invalid
-  teleBot.on(["message"], (ctx) => executeStep(ctx));
+  teleBot.on(["message"], (ctx) => {
+    // @ts-expect-error CTX type invalid
+    executeStep(ctx);
+  });
 
   log("Bot commands up");
 }
