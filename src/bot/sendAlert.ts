@@ -80,7 +80,6 @@ export async function sendAlert(txnData: TxnData) {
       base_token_price_native_currency: price_ton,
       fdv_usd,
       market_cap_usd,
-      address,
       reserve_in_usd,
     } = data.attributes;
 
@@ -118,7 +117,7 @@ export async function sendAlert(txnData: TxnData) {
         ? `https://dedust.io/swap/TON/${symbol}`
         : `${DEX_URL}/swap?chartVisible=true&tt=TON&ft=${symbol}`;
     const chartUrl = `https://www.geckoterminal.com/ton/pools/${hardCleanUpBotMessage(
-      address
+      Address.parse(pool).toString({ urlSafe: true })
     )}`;
     const dexsUrl = `https://dexscreener.com/ton/${hardCleanUpBotMessage(
       friendlyJetton
