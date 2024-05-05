@@ -1,5 +1,5 @@
 import { TokenPoolData, TxnData } from "@/types";
-import { TON_TOKEN_ID, bannedTokens, trendingIcons } from "@/utils/constants";
+import { bannedTokens, trendingIcons } from "@/utils/constants";
 import { client, teleBot } from "..";
 import {
   BOT_USERNAME,
@@ -47,27 +47,26 @@ export async function sendAlert(txnData: TxnData) {
       )
     )?.data.data;
 
-    const data = poolsData.at(0);
-
-    if (!data) {
-      log(`No data found for ${jetton}`);
-      return false;
-    }
-
     log(`Txn ${hash} for ${symbol}`);
 
-    const pools = poolsData
-      .map(({ attributes, relationships }) => {
-        const isTonPool = relationships.quote_token.data.id === TON_TOKEN_ID;
-        if (isTonPool) return Address.parse(attributes.address).toRawString();
-        return false;
-      })
-      .filter((pool) => Boolean(pool));
+    const pools = poolsData.map(({ attributes }) =>
+      Address.parse(attributes.address).toRawString()
+    );
 
     // To make sure that only pools are sending out tokens as only those are buys
     const txnSenderIsPool = pools.includes(pool);
     if (!txnSenderIsPool) {
       log(`Sender of ${jetton} is not a pool`);
+      return false;
+    }
+
+    const friendlyPool = Address.parse(pool).toString({ urlSafe: true });
+    const data = poolsData.find(
+      ({ attributes }) => attributes.address === friendlyPool
+    );
+
+    if (!data) {
+      log(`No data found for ${jetton}`);
       return false;
     }
 
@@ -117,7 +116,7 @@ export async function sendAlert(txnData: TxnData) {
         ? `https://dedust.io/swap/TON/${symbol}`
         : `${DEX_URL}/swap?chartVisible=true&tt=TON&ft=${symbol}`;
     const chartUrl = `https://www.geckoterminal.com/ton/pools/${hardCleanUpBotMessage(
-      Address.parse(pool).toString({ urlSafe: true })
+      friendlyPool
     )}`;
     const dexsUrl = `https://dexscreener.com/ton/${hardCleanUpBotMessage(
       friendlyJetton
