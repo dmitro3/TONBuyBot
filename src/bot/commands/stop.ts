@@ -3,6 +3,7 @@ import { BotCommandContextType, StoredGroup } from "@/types";
 import { cleanUpBotMessage } from "@/utils/bot";
 import { BOT_USERNAME } from "@/utils/env";
 import { onlyAdmin } from "../utils";
+import { syncProjectGroups } from "@/vars/projectGroups";
 
 export async function stopBot(ctx: BotCommandContextType) {
   const { id: chatId, type } = ctx.chat;
@@ -31,7 +32,7 @@ export async function stopBot(ctx: BotCommandContextType) {
       removeDocumentById({
         collectionName: "project_groups",
         id: projectData.id || "",
-      });
+      }).then(() => syncProjectGroups());
     } else {
       text = `${BOT_USERNAME} isn't running here`;
       ctx.reply(cleanUpBotMessage(text), { parse_mode: "MarkdownV2" });
