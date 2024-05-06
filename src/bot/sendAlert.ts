@@ -49,23 +49,27 @@ export async function sendAlert(txnData: TxnData) {
 
     log(`Txn ${hash} for ${symbol}`);
 
-    const pools = poolsData.map(({ attributes, relationships }) => {
-      const poolAddress = Address.parse(attributes.address).toRawString();
-      const isTonPool = relationships.quote_token.data.id === TON_TOKEN_ID;
-      if (isTonPool) return poolAddress;
-      return false;
-    });
+    const pools = poolsData
+      .map(({ attributes, relationships }) => {
+        const poolAddress = attributes.address.toLowerCase(); // these are lowercase friendly pool addresses
+        const isTonPool = relationships.quote_token.data.id === TON_TOKEN_ID;
+        if (isTonPool) return poolAddress;
+        return false;
+      })
+      .filter((pool) => pool);
 
     // To make sure that only pools are sending out tokens as only those are buys
-    const txnSenderIsPool = pools.includes(pool);
+    const friendlyPool = Address.parse(pool).toString({ urlSafe: true });
+    const txnSenderIsPool = pools.includes(friendlyPool.toLowerCase());
+
     if (!txnSenderIsPool) {
       log(`Sender of ${jetton} is not a pool`);
       return false;
     }
 
-    const friendlyPool = Address.parse(pool).toString({ urlSafe: true });
     const data = poolsData.find(
-      ({ attributes }) => attributes.address === friendlyPool
+      ({ attributes }) =>
+        attributes.address.toLowerCase() === friendlyPool.toLowerCase()
     );
 
     if (!data) {
