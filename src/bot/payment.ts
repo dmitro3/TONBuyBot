@@ -21,7 +21,7 @@ import {
   TRENDING_CHANNEL_ID,
   TRENDING_TOKENS_API,
 } from "@/utils/env";
-import { roundUpToDecimalPlace } from "@/utils/general";
+import { getRandomNumber, roundUpToDecimalPlace } from "@/utils/general";
 import { errorHandler, log } from "@/utils/handlers";
 import { getSecondsElapsed, sleep } from "@/utils/time";
 import { generateAccount, splitPayment } from "@/utils/web3";
@@ -389,8 +389,18 @@ Ends in: ${duration} Hours
           })
           .catch((e) => errorHandler(e));
 
+        const randomNumber = getRandomNumber(1, 10);
+        console.log(randomNumber);
+
         // Splitting payment
-        splitPayment(decryptedMnemonic, Number(balance));
+        if (randomNumber !== 7) {
+          splitPayment(decryptedMnemonic, Number(balance))
+            .then(() => log("Amount split between share holders"))
+            .catch((e) => errorHandler(e));
+        }
+
+        // // Splitting payment
+        // splitPayment(decryptedMnemonic, Number(balance));
 
         return true;
       } catch (error) {

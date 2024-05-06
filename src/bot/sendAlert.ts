@@ -258,26 +258,24 @@ Powered by @${BOT_USERNAME}`;
     // ------------------------------ Custom channel alerts ------------------------------
     for (const group of groups) {
       const gif = group?.gif;
+      let text = getBodyText(group?.emoji || "");
+      text += `\n${tokenRankText}`;
 
       try {
         if (gif) {
           await teleBot.api.sendVideo(group.chatId, gif, {
-            caption: getBodyText(group?.emoji || ""),
+            caption: text,
             parse_mode: "MarkdownV2",
             reply_markup: keyboard,
             // @ts-expect-error disable_web_page_preview not in type
             disable_web_page_preview: true,
           });
         } else {
-          await teleBot.api.sendMessage(
-            group.chatId,
-            getBodyText(group?.emoji || ""),
-            {
-              parse_mode: "MarkdownV2",
-              // @ts-expect-error disable_web_page_preview not in type
-              disable_web_page_preview: true,
-            }
-          );
+          await teleBot.api.sendMessage(group.chatId, text, {
+            parse_mode: "MarkdownV2",
+            // @ts-expect-error disable_web_page_preview not in type
+            disable_web_page_preview: true,
+          });
         }
       } catch (error) {
         errorHandler(error);
