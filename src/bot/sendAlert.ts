@@ -202,7 +202,7 @@ export async function sendAlert(txnData: TxnData) {
     const getBodyText = (emoji: string) => {
       const greenEmojis = `${emoji || "👾"}`.repeat(emojiCount);
 
-      const text = `[${cleanedName} Buy\\!](https://t.me/${BOT_USERNAME})
+      const text = `[${cleanedName} Buy\\!](https://t.me/tontrending_LIVE_TON/420)
 ${greenEmojis}
 
 💲 *Spent*: ${cleanUpBotMessage(spentTON)} TON \\($${cleanUpBotMessage(
